@@ -11,7 +11,7 @@ class CompositionStage extends Stage {
     }
 
     @Override
-    protected String name() {
+    String name() {
         cfg.name ?: 'Composite'
     }
 

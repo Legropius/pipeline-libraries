@@ -1,6 +1,6 @@
 package de.schaefer
 
-def safeStage(String name, Closure body) {
+static def safeStage(String name, Closure body) {
     stage(name) {
         try {
             body()
