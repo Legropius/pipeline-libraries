@@ -8,7 +8,7 @@ class MavenTestStage extends Stage {
 
     private final BuildMode buildMode = BuildMode.MAVEN
 
-    MavenTestStage(Context ctx, Map cfg = [:]) {
+    MavenTestStage(final Context ctx, final Map cfg = [:]) {
         super(ctx, cfg)
     }
 
@@ -18,7 +18,7 @@ class MavenTestStage extends Stage {
     }
 
     @Override
-    void execute() {
+    void execute(final Closure action = {}) {
         ctx.script.dir(ctx.path) {
             ctx.script.sh 'mvn test'
         }

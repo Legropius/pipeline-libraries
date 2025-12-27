@@ -18,7 +18,7 @@ class Context {
     final Map<String, String> env = [:]
 
     /** Build-Parameter */
-    final Map<String, Object> params = [:]
+    final Map<String, Object> params = [PUSH_TO_GITLAB: false]
 
     /** Zwischenergebnisse */
     final Map<String, Object> state = [:]
@@ -36,7 +36,7 @@ class Context {
     }
 
     String branchName() {
-        script.env.BRANCH_NAME
+        env.BRANCH_NAME ?: script.env?.BRANCH_NAME
     }
 
     boolean isMainBranch() {

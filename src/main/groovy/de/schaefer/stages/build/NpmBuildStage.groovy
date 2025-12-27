@@ -8,7 +8,7 @@ class NpmBuildStage extends Stage {
 
     private final BuildMode buildMode = BuildMode.NPM
 
-    NpmBuildStage(Context ctx, Map cfg = [:]) {
+    NpmBuildStage(final Context ctx, final Map cfg = [:]) {
         super(ctx, cfg)
     }
 
@@ -18,7 +18,7 @@ class NpmBuildStage extends Stage {
     }
 
     @Override
-    void execute() {
+    void execute(final Closure action = {}) {
         ctx.inServiceDir {
             ctx.script.sh 'npm install'
             ctx.script.sh 'npm run build'

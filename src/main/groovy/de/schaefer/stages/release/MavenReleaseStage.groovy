@@ -8,7 +8,7 @@ class MavenReleaseStage extends Stage {
 
     private final BuildMode buildMode = BuildMode.MAVEN
 
-    MavenReleaseStage(Context ctx, Map cfg = [:]) {
+    MavenReleaseStage(final Context ctx, final Map cfg = [:]) {
         super(ctx, cfg)
     }
 
@@ -18,7 +18,7 @@ class MavenReleaseStage extends Stage {
     }
 
     @Override
-    void execute() {
+    void execute(final Closure action = {}) {
         ctx.script.dir(ctx.path) {
             ctx.script.sh 'mvn clean deploy'
         }

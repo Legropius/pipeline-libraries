@@ -8,7 +8,7 @@ class NpmTestStage extends Stage {
 
     private final BuildMode buildMode = BuildMode.NPM
 
-    NpmTestStage(Context ctx, Map cfg = [:]) {
+    NpmTestStage(final Context ctx, final Map cfg = [:]) {
         super(ctx, cfg)
     }
 
@@ -18,7 +18,7 @@ class NpmTestStage extends Stage {
     }
 
     @Override
-    void execute() {
+    void execute(final Closure action = {}) {
         ctx.script.dir(ctx.path) {
             ctx.script.sh 'npm test'
         }

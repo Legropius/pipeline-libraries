@@ -4,7 +4,7 @@ import de.schaefer.Context
 
 class CheckoutStage extends Stage {
 
-    CheckoutStage(Context ctx, Map cfg = [:]) {
+    CheckoutStage(final Context ctx, final Map cfg = [:]) {
         super(ctx, cfg)
     }
 
@@ -14,7 +14,7 @@ class CheckoutStage extends Stage {
     }
 
     @Override
-    void execute() {
+    void execute(final Closure action = {}) {
         ctx.log("Checking out branch: ${ctx.script.env.BRANCH_NAME}")
         ctx.inServiceDir {
             ctx.script.checkout([

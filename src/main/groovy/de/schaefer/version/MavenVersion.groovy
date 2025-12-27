@@ -26,7 +26,7 @@ class MavenVersion implements Version {
         this.suffix = overrides.getOrDefault('suffix', other.suffix)
     }
 
-    static final MavenVersion from(String version) {
+    static final MavenVersion from(final String version) {
         final def matcher = VERSION_PATTERN.matcher(version)
         if (matcher.matches()) {
             final def versionGroup = matcher.group(1)
@@ -39,22 +39,22 @@ class MavenVersion implements Version {
     }
 
     @Override
-    final def bumpMajor() {
+    final Version bumpMajor() {
         return new MavenVersion(this, [major: this.major + 1, minor: 0, hotfix: 0])
     }
 
     @Override
-    final def bumpMinor() {
+    final Version bumpMinor() {
         return new MavenVersion(this, [minor: this.minor + 1, hotfix: 0])
     }
 
     @Override
-    final def bumpHotfix() {
+    final Version bumpHotfix() {
         return new MavenVersion(this, [hotfix: this.hotfix + 1])
     }
 
     @Override
-    final def build() {
+    final Version build() {
         return this
     }
 

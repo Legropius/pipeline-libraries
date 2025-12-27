@@ -30,6 +30,7 @@ private static void bumpMavenVersion(final Context ctx) {
     final def newVersion = getNewVersion(MavenVersion.from(version), ctx.mode)
     if (newVersion.toString() != version) {
         ctx.script.sh "mvn versions:set -DnewVersion=${newVersion} -DgenerateBackupPoms=false"
+        ctx.log("Bumped to version ${newVersion}!")
     }
 }
 
@@ -41,6 +42,7 @@ private static void bumpNpmVersion(final Context ctx) {
     final def newVersion = getNewVersion(NpmVersion.from(version), ctx.mode)
     if (newVersion.toString() != version) {
         ctx.script.sh "npm version ${newVersion} --no-git-tag-version"
+        ctx.log("Bumped to version ${newVersion}!")
     }
 }
 
@@ -55,4 +57,28 @@ private static Version getNewVersion(final Version version, final Mode mode) {
         default:
             return version.build()
     }
+}
+
+static void maybeBumpOnMain(final Context ctx) {
+    if (!ctx.isRelease()) {
+        return
+    }
+
+    if (!(ctx.mode in [Mode.MAJOR_RELEASE, Mode.MINOR_RELEASE])) {
+        return
+    }
+
+    ctx.script.echo "Release-branch detected (${ctx.branchName()}), bumping version on main..."
+
+    ctx.script.sh """
+        git fetch origin main
+        git checkout main
+    """
+
+    bumpVersion(ctx)
+
+    ctx.script.sh """
+        git commit -am "chore(mvn): bump version on main after ${ctx.mode}"
+        git checkout -
+    """
 }

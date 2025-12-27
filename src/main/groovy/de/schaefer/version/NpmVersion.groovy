@@ -29,7 +29,7 @@ class NpmVersion implements Version {
         this.buildNumber = overrides.getOrDefault('buildNumber', other.buildNumber) as long
     }
 
-    static final NpmVersion from(String version) {
+    static final NpmVersion from(final String version) {
         final def matcher = VERSION_PATTERN.matcher(version)
         if (matcher.matches()) {
             final def versionGroup = matcher.group(1)
@@ -43,22 +43,22 @@ class NpmVersion implements Version {
     }
 
     @Override
-    final def bumpMajor() {
+    final Version bumpMajor() {
         return new NpmVersion(this, [major: this.major + 1, minor: 0, hotfix: 0, buildNumber: 0])
     }
 
     @Override
-    final def bumpMinor() {
+    final Version bumpMinor() {
         return new NpmVersion(this, [minor: this.minor + 1, hotfix: 0, buildNumber: 0])
     }
 
     @Override
-    final def bumpHotfix() {
+    final Version bumpHotfix() {
         return new NpmVersion(this, [hotfix: this.hotfix + 1, buildNumber: 0])
     }
 
     @Override
-    final def build() {
+    final Version build() {
         return new NpmVersion(this, [buildNumber: this.buildNumber + 1])
     }
 

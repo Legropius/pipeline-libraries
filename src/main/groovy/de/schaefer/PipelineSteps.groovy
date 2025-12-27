@@ -20,7 +20,7 @@ class PipelineSteps {
         return new PipelineSteps(context)
     }
 
-    PipelineSteps addStage(Stage stage) {
+    PipelineSteps addStage(final Stage stage) {
         stages << stage
         return this
     }
@@ -31,7 +31,7 @@ class PipelineSteps {
         }
     }
 
-    PipelineSteps checkout(Map cfg = [:]) {
+    PipelineSteps checkout(final Map cfg = [:]) {
         addStage(new CheckoutStage(ctx, cfg))
         return this
     }

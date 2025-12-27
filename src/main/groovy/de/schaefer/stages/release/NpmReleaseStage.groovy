@@ -8,7 +8,7 @@ class NpmReleaseStage extends Stage {
 
     private final BuildMode buildMode = BuildMode.NPM
 
-    NpmReleaseStage(Context ctx, Map cfg = [:]) {
+    NpmReleaseStage(final Context ctx, final Map cfg = [:]) {
         super(ctx, cfg)
     }
 
@@ -18,7 +18,7 @@ class NpmReleaseStage extends Stage {
     }
 
     @Override
-    void execute() {
+    void execute(final Closure action = {}) {
         ctx.script.dir(ctx.path) {
             ctx.script.sh 'npm publish'
         }

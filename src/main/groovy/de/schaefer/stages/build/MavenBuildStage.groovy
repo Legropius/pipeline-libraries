@@ -8,7 +8,7 @@ class MavenBuildStage extends Stage {
 
     private final BuildMode buildMode = BuildMode.MAVEN
 
-    MavenBuildStage(Context ctx, Map cfg = [:]) {
+    MavenBuildStage(final Context ctx, final Map cfg = [:]) {
         super(ctx, cfg)
     }
 
@@ -18,7 +18,7 @@ class MavenBuildStage extends Stage {
     }
 
     @Override
-    void execute() {
+    void execute(final Closure action = {}) {
         ctx.inServiceDir {
             ctx.script.sh 'mvn clean package'
         }

@@ -4,7 +4,7 @@ import de.schaefer.Context
 
 class DeployStage extends Stage {
 
-    DeployStage(Context ctx, Map cfg = [:]) {
+    DeployStage(final Context ctx, final Map cfg = [:]) {
         super(ctx, cfg)
     }
 
@@ -14,7 +14,7 @@ class DeployStage extends Stage {
     }
 
     @Override
-    void execute() {
+    void execute(final Closure action = {}) {
         ctx.inServiceDir {
             ctx.script.sh "echo Deploying ${ctx.service}"
         }

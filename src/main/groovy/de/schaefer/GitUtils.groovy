@@ -5,7 +5,7 @@ static void pushToBranch(final String branch) {
         throw new IllegalArgumentException("Branch must not be empty")
     }
 
-    def process = ["git", "push", "origin", branch].execute()
+    final def process = ["git", "push", "origin", branch].execute()
     process.waitFor()
 
     if (process.exitValue() != 0) {
@@ -20,7 +20,7 @@ static void createGitTag(final String tagName) {
         throw new IllegalArgumentException("Tag-name must not be empty")
     }
 
-    def process = ["git", "tag", tagName].execute()
+    final def process = ["git", "tag", tagName].execute()
     process.waitFor()
 
     if (process.exitValue() != 0) {
