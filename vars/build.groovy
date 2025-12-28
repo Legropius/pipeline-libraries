@@ -13,7 +13,7 @@ def call(Map config = [:]) {
             .build()
             .test()
             .deploy()
-            .release()
+            .push()
             .run()
 }
 

@@ -1,12 +1,12 @@
 package de.schaefer.version
 
+import de.schaefer.Mode
+
 interface Version {
 
-    Version bumpMajor()
+    Version bumpMainAfterRelease(Mode mode)
 
-    Version bumpMinor()
-
-    Version bumpHotfix()
+    Version getReleaseVersion(Mode mode)
 
     Version build()
 }

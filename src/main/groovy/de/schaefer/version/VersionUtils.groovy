@@ -4,62 +4,53 @@ import de.schaefer.BuildMode
 import de.schaefer.Context
 import de.schaefer.Mode
 
-static void bumpVersion(final Context ctx) {
+import java.util.function.Function
+
+// TODO: rework version workflow!
+static void buildReleaseVersionsAndMaybeBumpMain(final Context ctx) {
     ctx.buildModes
-    .each {bumpVersion(ctx, it)}
+            .each { buildReleaseVersions(ctx, it) }   // TODO: Loop necessary?
+    maybeBumpOnMain(ctx)
 }
 
-static void bumpVersion(final Context ctx, final BuildMode buildMode) {
+private static void buildReleaseVersions(final Context ctx, final BuildMode buildMode) {
     switch (buildMode) {
         case BuildMode.MAVEN:
-            bumpMavenVersion(ctx)
+            buildMavenVersion(ctx, version -> MavenVersion.from(version).getReleaseVersion(ctx.mode))
             break
         case BuildMode.NPM:
-            bumpNpmVersion(ctx)
+            buildNpmVersion(ctx, version -> NpmVersion.from(version).getReleaseVersion(ctx.mode))
             break
         default:
             throw new IllegalArgumentException("Unsupported build mode ${buildMode}!")
     }
 }
 
-private static void bumpMavenVersion(final Context ctx) {
+private static void buildMavenVersion(final Context ctx, final Function<String, Version> getVersion) {
     final String version = ctx.script.sh(
             script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout",
             returnStdout: true
     ).trim()
-    final def newVersion = getNewVersion(MavenVersion.from(version), ctx.mode)
+    final def newVersion = getVersion.apply(version)
     if (newVersion.toString() != version) {
         ctx.script.sh "mvn versions:set -DnewVersion=${newVersion} -DgenerateBackupPoms=false"
         ctx.log("Bumped to version ${newVersion}!")
     }
 }
 
-private static void bumpNpmVersion(final Context ctx) {
+private static void buildNpmVersion(final Context ctx, final Function<String, Version> getVersion) {
     final String version = ctx.script.sh(
             script: "npm pkg get version | tr -d '\"'",
             returnStdout: true
     ).trim()
-    final def newVersion = getNewVersion(NpmVersion.from(version), ctx.mode)
+    final def newVersion = getVersion.apply(version)
     if (newVersion.toString() != version) {
         ctx.script.sh "npm version ${newVersion} --no-git-tag-version"
         ctx.log("Bumped to version ${newVersion}!")
     }
 }
 
-private static Version getNewVersion(final Version version, final Mode mode) {
-    switch (mode) {
-        case Mode.MAJOR_RELEASE:
-            return version.bumpMajor()
-        case Mode.MINOR_RELEASE:
-            return version.bumpMinor()
-        case Mode.HOTFIX:
-            return version.bumpHotfix()
-        default:
-            return version.build()
-    }
-}
-
-static void maybeBumpOnMain(final Context ctx) {
+private static void maybeBumpOnMain(final Context ctx) {
     if (!ctx.isRelease()) {
         return
     }
@@ -75,10 +66,21 @@ static void maybeBumpOnMain(final Context ctx) {
         git checkout main
     """
 
-    bumpVersion(ctx)
+    buildMainVersions(ctx)
 
     ctx.script.sh """
         git commit -am "chore(mvn): bump version on main after ${ctx.mode}"
         git checkout -
     """
+}
+
+
+private static void buildMainVersions(final Context ctx) {
+    if (ctx.buildModes.contains(BuildMode.MAVEN)) {
+        buildMavenVersion(ctx, version -> MavenVersion.from(version).bumpMainAfterRelease(ctx.mode))
+    }
+
+    if (ctx.buildModes.contains(BuildMode.NPM)) {
+        buildNpmVersion(ctx, version -> NpmVersion.from(version).bumpMainAfterRelease(ctx.mode))
+    }
 }

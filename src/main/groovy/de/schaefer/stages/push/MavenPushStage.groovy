@@ -1,14 +1,14 @@
-package de.schaefer.stages.release
+package de.schaefer.stages.push
 
 import de.schaefer.BuildMode
 import de.schaefer.Context
 import de.schaefer.stages.Stage
 
-class NpmReleaseStage extends Stage {
+class MavenPushStage extends Stage {
 
-    private final BuildMode buildMode = BuildMode.NPM
+    private final BuildMode buildMode = BuildMode.MAVEN
 
-    NpmReleaseStage(final Context ctx, final Map cfg = [:]) {
+    MavenPushStage(final Context ctx, final Map cfg = [:]) {
         super(ctx, cfg)
     }
 
@@ -20,8 +20,8 @@ class NpmReleaseStage extends Stage {
     @Override
     void execute(final Closure action = {}) {
         ctx.script.dir(ctx.path) {
-            ctx.script.sh 'npm publish'
+            ctx.script.sh 'mvn clean deploy'
         }
-        ctx.state.deployed = [(buildMode): true]
+        ctx.state.pushed = [(buildMode): true]
     }
 }

@@ -1,5 +1,7 @@
 package de.schaefer.version
 
+import de.schaefer.Mode
+
 import java.util.regex.Pattern
 
 class MavenVersion implements Version {
@@ -39,24 +41,50 @@ class MavenVersion implements Version {
     }
 
     @Override
-    final Version bumpMajor() {
-        return new MavenVersion(this, [major: this.major + 1, minor: 0, hotfix: 0])
+    Version bumpMainAfterRelease(final Mode mode) {
+        final Version result
+        switch (mode) {
+            case Mode.MAJOR_RELEASE:
+                result = new MavenVersion(this, [major: this.major + 1, minor: 0, hotfix: 0])
+                break
+            case Mode.MINOR_RELEASE:
+                result = new MavenVersion(this, [minor: this.minor + 1, hotfix: 0])
+                break
+            case Mode.HOTFIX:
+                result = new MavenVersion(this)
+                break
+            default:
+                result = new MavenVersion(this)
+                break
+        }
+        return result
     }
 
     @Override
-    final Version bumpMinor() {
-        return new MavenVersion(this, [minor: this.minor + 1, hotfix: 0])
-    }
-
-    @Override
-    final Version bumpHotfix() {
-        return new MavenVersion(this, [hotfix: this.hotfix + 1])
+    Version getReleaseVersion(final Mode mode) {
+        final Version result
+        switch (mode) {
+            case Mode.MAJOR_RELEASE:
+                result = new MavenVersion(this, [suffix: null])
+                break
+            case Mode.MINOR_RELEASE:
+                result = new MavenVersion(this, [suffix: null])
+                break
+            case Mode.HOTFIX:
+                result = new MavenVersion(this, [suffix: null])
+                break
+            default:
+                result = new MavenVersion(this)
+                break
+        }
+        return result
     }
 
     @Override
     final Version build() {
-        return this
+        return new MavenVersion(this)
     }
+
 
     @Override
     String toString() {

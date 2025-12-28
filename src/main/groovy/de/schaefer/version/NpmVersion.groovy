@@ -1,5 +1,7 @@
 package de.schaefer.version
 
+import de.schaefer.Mode
+
 import java.util.regex.Pattern
 
 class NpmVersion implements Version {
@@ -43,18 +45,43 @@ class NpmVersion implements Version {
     }
 
     @Override
-    final Version bumpMajor() {
-        return new NpmVersion(this, [major: this.major + 1, minor: 0, hotfix: 0, buildNumber: 0])
+    Version bumpMainAfterRelease(final Mode mode) {
+        final Version result
+        switch (mode) {
+            case Mode.MAJOR_RELEASE:
+                result = new NpmVersion(this, [major: this.major + 1, minor: 0, hotfix: 0, buildNumber: 0])
+                break
+            case Mode.MINOR_RELEASE:
+                result = new NpmVersion(this, [minor: this.minor + 1, hotfix: 0, buildNumber: 0])
+                break
+            case Mode.HOTFIX:
+                result = new NpmVersion(this, [hotfix: this.hotfix + 1])
+                break
+            default:
+                result = new NpmVersion(this)
+                break
+        }
+        return result
     }
 
     @Override
-    final Version bumpMinor() {
-        return new NpmVersion(this, [minor: this.minor + 1, hotfix: 0, buildNumber: 0])
-    }
-
-    @Override
-    final Version bumpHotfix() {
-        return new NpmVersion(this, [hotfix: this.hotfix + 1, buildNumber: 0])
+    Version getReleaseVersion(final Mode mode) {
+        final Version result
+        switch (mode) {
+            case Mode.MAJOR_RELEASE:
+                result = new NpmVersion(this, [suffix: null])
+                break
+            case Mode.MINOR_RELEASE:
+                result = new NpmVersion(this, [suffix: null])
+                break
+            case Mode.HOTFIX:
+                result = new NpmVersion(this, [suffix: null])
+                break
+            default:
+                result = new NpmVersion(this)
+                break
+        }
+        return result
     }
 
     @Override
