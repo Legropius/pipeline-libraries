@@ -1,6 +1,6 @@
 package de.schaefer.version
 
-
+import de.schaefer.Mode
 import spock.lang.Specification
 
 class MavenVersionTest extends Specification {

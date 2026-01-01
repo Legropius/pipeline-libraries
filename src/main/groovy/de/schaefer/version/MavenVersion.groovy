@@ -64,7 +64,7 @@ class MavenVersion implements Version {
     Version getNextReleaseVersion(final Mode mode) {
         final Version result
         switch (mode) {
-            case Mode.MAJOR_RELEASE, Mode.MINOR_RELEASE:
+            case [Mode.MAJOR_RELEASE, Mode.MINOR_RELEASE]:
                 if (isAlreadyReleased()) {  // cannot major or minor a version again!
                     throw new IllegalStateException("Cannot release ${this.toString()}. Please provide a SNAPSHOT version!")
                 }

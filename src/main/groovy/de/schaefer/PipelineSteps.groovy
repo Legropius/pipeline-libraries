@@ -5,7 +5,6 @@ import de.schaefer.stages.DeployStage
 import de.schaefer.stages.Stage
 import de.schaefer.stages.build.BuildStageFactory
 import de.schaefer.stages.push.PushStageFactory
-import de.schaefer.stages.release.ReleaseStage
 import de.schaefer.stages.test.TestStageFactory
 
 class PipelineSteps {
@@ -54,11 +53,6 @@ class PipelineSteps {
     PipelineSteps push() {
         PushStageFactory.from(ctx)
                 .each { addStage(it) }
-        return this
-    }
-
-    PipelineSteps release() {
-        addStage(new ReleaseStage(ctx))
         return this
     }
 

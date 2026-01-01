@@ -4,10 +4,18 @@ import spock.lang.Specification;
 
 class ContextTest extends Specification {
 
+    private static final PARAMS;
+
+    static {
+        PARAMS = Params.builder()
+        .branchName("release/1.2")
+        .build()
+    }
+
     def "log schreibt Echo mit Service-Namen"() {
         given:
         def script = new ScriptMock()
-        def ctx = new Context(script)
+        def ctx = new Context(script, PARAMS)
         ctx.service = 'orders'
 
         when:
@@ -20,7 +28,7 @@ class ContextTest extends Specification {
     def "inServiceDir wechselt ins Service-Verzeichnis"() {
         given:
         def script = new ScriptMock()
-        def ctx = new Context(script)
+        def ctx = new Context(script, PARAMS)
         ctx.path = 'services/orders'
         def executed = false
 
@@ -37,9 +45,11 @@ class ContextTest extends Specification {
     def "isMainBranch erkennt main"() {
         given:
         def script = new ScriptMock()
-        script.env.BRANCH_NAME = 'main'
+        def params = Params.builder()
+        .branchName("main")
+        .build()
 
-        def ctx = new Context(script)
+        def ctx = new Context(script, params)
 
         expect:
         ctx.isMainBranch()
@@ -48,8 +58,7 @@ class ContextTest extends Specification {
     def "isReleaseBranch erkennt release Branch"() {
         given:
         def script = new ScriptMock()
-        script.env.BRANCH_NAME = 'release/1.2.3'
-        def ctx = new Context(script)
+        def ctx = new Context(script, PARAMS)
 
         expect:
         ctx.isReleaseBranch()
@@ -58,7 +67,7 @@ class ContextTest extends Specification {
     def "isReleaseBuild erkennt release"() {
         given:
         def script = new ScriptMock()
-        def ctx = new Context(script)
+        def ctx = new Context(script, PARAMS)
         ctx.mode = Mode.MAJOR_RELEASE
 
         expect:
@@ -68,8 +77,7 @@ class ContextTest extends Specification {
     def "isRelease erkennt release und release Branch"() {
         given:
         def script = new ScriptMock()
-        script.env.BRANCH_NAME = 'release/1.2.3'
-        def ctx = new Context(script)
+        def ctx = new Context(script, PARAMS)
         ctx.mode = Mode.MAJOR_RELEASE
 
         expect:
