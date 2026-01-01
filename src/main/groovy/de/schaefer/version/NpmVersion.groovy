@@ -45,7 +45,7 @@ class NpmVersion implements Version {
     }
 
     @Override
-    Version bumpMainAfterRelease(final Mode mode) {
+    Version possiblyBumpMain(final Mode mode) {
         final Version result
         switch (mode) {
             case Mode.MAJOR_RELEASE:
@@ -58,30 +58,39 @@ class NpmVersion implements Version {
                 result = new NpmVersion(this, [hotfix: this.hotfix + 1])
                 break
             default:
-                result = new NpmVersion(this)
-                break
+                throw new IllegalStateException("Version ${this.toString()} could be behind current release version and is therefore forbidden!")
         }
         return result
     }
 
     @Override
-    Version getReleaseVersion(final Mode mode) {
+    Version getNextReleaseVersion(final Mode mode) {
         final Version result
         switch (mode) {
-            case Mode.MAJOR_RELEASE:
-                result = new NpmVersion(this, [suffix: null])
-                break
-            case Mode.MINOR_RELEASE:
-                result = new NpmVersion(this, [suffix: null])
+            case Mode.MAJOR_RELEASE, Mode.MINOR_RELEASE:
+                if (isAlreadyReleased()) {  // cannot major or minor a version again!
+                    throw new IllegalStateException("Cannot release ${this.toString()}. Please provide a valid dev-version!")
+                }
+                result = new NpmVersion(this, [suffix: null, buildNumber: null])
                 break
             case Mode.HOTFIX:
-                result = new NpmVersion(this, [suffix: null])
+                if (isNotYetReleased()) {  // can only hotfix a released version!
+                    throw new IllegalStateException("Cannot release ${this.toString()}. Please provide a valid dev-version!")
+                }
+                result = new NpmVersion(this, [hotfix: this.hotfix + 1, suffix: null])
                 break
             default:
-                result = new NpmVersion(this)
-                break
+                throw new IllegalStateException("Version ${this.toString()} must not exist or already exists as a release version!")
         }
         return result
+    }
+
+    private boolean isAlreadyReleased() {
+        this.suffix == null && this.buildNumber == null
+    }
+
+    private boolean isNotYetReleased() {
+        this.suffix != null || this.buildNumber != null
     }
 
     @Override

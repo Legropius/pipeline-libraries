@@ -14,7 +14,7 @@ class MavenPushStage extends Stage {
 
     @Override
     String name() {
-        "Release ${buildMode}"
+        "Push ${buildMode}"
     }
 
     @Override

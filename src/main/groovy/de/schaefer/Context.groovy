@@ -2,6 +2,8 @@ package de.schaefer
 
 class Context {
 
+    private static final def RELEASE = 'release'
+
     /** Jenkins Script Context (this aus Jenkinsfile: org.jenkinsci.plugins.workflow.cps.CpsScript) */
     final def script
 
@@ -18,13 +20,14 @@ class Context {
     final Map<String, String> env = [:]
 
     /** Build-Parameter */
-    final Map<String, Object> params = [PUSH_TO_GITLAB: false]
+    final Params params
 
     /** Zwischenergebnisse */
     final Map<String, Object> state = [:]
 
-    Context(def script) {
+    Context(final def script, final Params params) {
         this.script = script
+        this.params = params
     }
 
     void inServiceDir(Closure body) {
@@ -36,11 +39,15 @@ class Context {
     }
 
     String branchName() {
-        env.BRANCH_NAME ?: script.env?.BRANCH_NAME
+        params.branchName
     }
 
     boolean isMainBranch() {
-        branchName() == 'main'
+        branchName() == params.mainBranch
+    }
+
+    String mainBranch() {
+        params.mainBranch
     }
 
     boolean isRelease() {
@@ -48,7 +55,7 @@ class Context {
     }
 
     boolean isReleaseBranch() {
-        branchName().startsWith('release')
+        branchName().startsWith(RELEASE)
     }
 
     boolean isReleaseBuild() {

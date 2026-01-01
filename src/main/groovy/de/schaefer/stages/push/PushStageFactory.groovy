@@ -4,9 +4,14 @@ import de.schaefer.BuildMode
 import de.schaefer.Context
 import de.schaefer.stages.Stage
 
-static Set<Stage> from(final Context context, final Map cfg = [:]) {
-    context.buildModes
-            .collect(it -> toStage(it, context, cfg))
+static Set<Stage> from(final Context ctx, final Map cfg = [:]) {
+    final def stages = ctx.buildModes
+            .collect(it -> toStage(it, ctx, cfg))
+            .toSet()
+    if (ctx.params.automaticallyHandleVersionUpdates) {
+        stages << new VersionStage(ctx, cfg)
+    }
+    return stages
 }
 
 private static Stage toStage(final BuildMode buildMode, final Context context, final Map cfg = [:]) {

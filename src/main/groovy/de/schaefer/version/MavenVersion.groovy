@@ -8,6 +8,7 @@ class MavenVersion implements Version {
 
     private static final String PATTERN_STRING = "^(\\d+\\.\\d+\\.\\d+)(.*)?\$"
     private static final Pattern VERSION_PATTERN = Pattern.compile(PATTERN_STRING)
+    private static final String SNAPSHOT = "-SNAPSHOT"
 
     private final long major
     private final long minor
@@ -41,7 +42,7 @@ class MavenVersion implements Version {
     }
 
     @Override
-    Version bumpMainAfterRelease(final Mode mode) {
+    Version possiblyBumpMain(final Mode mode) {
         final Version result
         switch (mode) {
             case Mode.MAJOR_RELEASE:
@@ -54,30 +55,39 @@ class MavenVersion implements Version {
                 result = new MavenVersion(this)
                 break
             default:
-                result = new MavenVersion(this)
-                break
+                throw new IllegalStateException("Version ${this.toString()} could be behind current release version and is therefore forbidden!")
         }
         return result
     }
 
     @Override
-    Version getReleaseVersion(final Mode mode) {
+    Version getNextReleaseVersion(final Mode mode) {
         final Version result
         switch (mode) {
-            case Mode.MAJOR_RELEASE:
-                result = new MavenVersion(this, [suffix: null])
-                break
-            case Mode.MINOR_RELEASE:
+            case Mode.MAJOR_RELEASE, Mode.MINOR_RELEASE:
+                if (isAlreadyReleased()) {  // cannot major or minor a version again!
+                    throw new IllegalStateException("Cannot release ${this.toString()}. Please provide a SNAPSHOT version!")
+                }
                 result = new MavenVersion(this, [suffix: null])
                 break
             case Mode.HOTFIX:
-                result = new MavenVersion(this, [suffix: null])
+                if (isNotYetReleased()) {  // can only hotfix a released version!
+                    throw new IllegalStateException("Please release ${this.toString()} before considering a hotfix!")
+                }
+                result = new MavenVersion(this, [hotfix: this.hotfix + 1])
                 break
             default:
-                result = new MavenVersion(this)
-                break
+                throw new IllegalStateException("Version ${this.toString()} must not exist or already exists as a release version!")
         }
         return result
+    }
+
+    private boolean isAlreadyReleased() {
+        !this.suffix.endsWith(SNAPSHOT)
+    }
+
+    private isNotYetReleased() {
+        this.suffix != null
     }
 
     @Override
