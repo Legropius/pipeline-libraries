@@ -2,6 +2,7 @@ package de.schaefer.stages.build
 
 import de.schaefer.BuildMode
 import de.schaefer.Context
+import de.schaefer.JenkinsUtils
 import de.schaefer.stages.Stage
 
 class MavenBuildStage extends Stage {
@@ -25,5 +26,7 @@ class MavenBuildStage extends Stage {
 
         ctx.state.buildSuccessful = [(buildMode): true]
         ctx.log("Build finished.")
+
+        JenkinsUtils.stashFor(ctx, buildMode)
     }
 }

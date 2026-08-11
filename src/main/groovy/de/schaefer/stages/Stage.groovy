@@ -21,5 +21,6 @@ abstract class Stage {
     }
 
     abstract String name()
+
     protected abstract void execute(final Closure action = {})
 }
