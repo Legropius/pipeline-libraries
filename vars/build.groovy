@@ -12,7 +12,7 @@ def call(Map config = [:]) {
     ctx.buildModes = [BuildMode.MAVEN, BuildMode.NPM]
     ctx.path = config.path ?: '.'
 
-    PipelineSteps.from(ctx)
+    PipelineSteps.with(ctx)
             .checkout()
             .build()
             .test()

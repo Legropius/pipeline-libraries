@@ -4,7 +4,7 @@ import de.schaefer.BuildMode
 import de.schaefer.Context
 import de.schaefer.stages.Stage
 
-static Set<Stage> from(final Context context, final Map cfg = [:]) {
+static Set<Stage> with(final Context context, final Map cfg = [:]) {
     context.buildModes
             .collect(it -> toStage(it, context, cfg))
 }

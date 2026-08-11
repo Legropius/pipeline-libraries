@@ -16,7 +16,7 @@ class PipelineSteps {
         this.ctx = ctx
     }
 
-    static PipelineSteps from(final Context context) {
+    static PipelineSteps with(final Context context) {
         return new PipelineSteps(context)
     }
 
@@ -37,21 +37,21 @@ class PipelineSteps {
     }
 
     PipelineSteps build() {
-        BuildStageFactory.from(ctx)
+        BuildStageFactory.with(ctx)
                 .each { addStage(it) }
         return this
     }
 
     PipelineSteps test() {
         if (ctx.isRelease()) {
-            TestStageFactory.from(ctx)
+            TestStageFactory.with(ctx)
                     .each { addStage(it) }
         }
         return this
     }
 
     PipelineSteps push() {
-        PushStageFactory.from(ctx)
+        PushStageFactory.with(ctx)
                 .each { addStage(it) }
         return this
     }

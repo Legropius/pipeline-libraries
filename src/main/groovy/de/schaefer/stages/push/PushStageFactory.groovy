@@ -4,13 +4,10 @@ import de.schaefer.BuildMode
 import de.schaefer.Context
 import de.schaefer.stages.Stage
 
-static Set<Stage> from(final Context ctx, final Map cfg = [:]) {
+static Set<Stage> with(final Context ctx, final Map cfg = [:]) {
     final def stages = ctx.buildModes
             .collect(it -> toStage(it, ctx, cfg))
             .toSet()
-    if (ctx.params.automaticallyHandleVersionUpdates) {
-        stages << new VersionStage(ctx, cfg)
-    }
     return stages
 }
 
